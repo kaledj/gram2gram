@@ -1,0 +1,4 @@
+node_modules/
+leveldb/
+certs/*.pem
+certs/*.crt
