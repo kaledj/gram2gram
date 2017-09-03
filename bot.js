@@ -143,7 +143,13 @@ bot.onText(/\/gram2gram$/, (msg) => {
 });
 
 bot.on('message', (msg) => {
-  console.log(`Message [from/in] ${msg.chat.usename || msg.chat.title} (${msg.chat.id})`);
+  console.log(`Message [from/in] ${msg.chat.username || msg.chat.title} (${msg.chat.id})`);
 });
+
+bot.sendMessageToSubscribers = (message) => {
+  _.forEach(subscriptions, s=> {
+    bot.sendMessage(s.id, message);
+  });
+};
 
 module.exports = bot;

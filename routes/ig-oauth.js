@@ -42,7 +42,7 @@ router.get('/', (req, res) => {
     if (username && access_token && ig_id) {
       db.putAsync(telegram_id, { username, access_token });
       db.putAsync(ig_id, { username, access_token });
-      bot.sendMessage(CHAT_ID, `Authenticated ${username} (IG: ${ig_id}, TG: ${telegram_id})`);
+      bot.sendMessageToSubscribers(`Authenticated ${username} (IG: ${ig_id}, TG: ${telegram_id})`);
     }
     res.send('<p>OAuth might have worked! :-)</p>');
   });
@@ -50,7 +50,7 @@ router.get('/', (req, res) => {
 
 router.use((err, req, res, next) => {
   if (req) {
-    bot.sendMessage(CHAT_ID,
+    bot.sendMessageToSubscribers(
       `[ig-oauth]: I broke trying to handle ${req.method} ${req.path}.` +
       `Send help or ill page you \u1F525. ${err.message}`);
   }
