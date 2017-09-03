@@ -146,9 +146,10 @@ bot.on('message', (msg) => {
   console.log(`Message [from/in] ${msg.chat.username || msg.chat.title} (${msg.chat.id})`);
 });
 
-bot.sendMessageToSubscribers = (message) => {
+bot.sendMessageToSubscribers = (message, options) => {
+  const msgOptions = options || {};
   _.forEach(subscriptions, s=> {
-    bot.sendMessage(s.id, message);
+    bot.sendMessage(s.id, message, msgOptions);
   });
 };
 
