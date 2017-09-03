@@ -3,6 +3,7 @@ const request = require('request-promise-native');
 const load_envvar = require('./env');
 const express = require('express');
 const db = require('./db');
+const _ =  require('lodash');
 
 const HOST = load_envvar('HOST');
 const IG_CLIENT_ID = load_envvar('IG_CLIENT_ID');
@@ -27,14 +28,22 @@ const bot = new TelegramBot(BOT_TOKEN, {
   polling: true
 });
 
+const subscriptions = [];
+
 bot.router = express.Router();
 
 const authenticate_telegram_user = (user) => bot.sendMessage(user.id,
   `${OAUTH_URL}&state=${user.id}:${user.username}`
 );
 
+// TODO: these are webhook related things
 // bot.setWebHook(`https://${HOST}/bot${BOT_TOKEN}`, {
 //   certificate: options.webHook.cert
+// });
+
+// bot.router.post(`/bot${BOT_TOKEN}`, (req, res) => {
+//   bot.processUpdate(req.body);
+//   res.sendStatus(200);
 // });
 
 bot.on('callback_query', async cbq => {
@@ -82,20 +91,59 @@ bot.onText(/\/gram2gram (.+)/, async (msg, match) => {
   if (command === 'auth') {
     authenticate_telegram_user(msg.from);
   }
+  if (command === 'subscribe') {
+    subscribe(msg.chat);
+  }
+  if (command === 'unsubscribe') {
+    unsubscribe(msg.chat);
+  }
+  if (command === 'subscriptions') {
+    listSubscriptions(msg.chat);
+  }
 });
 
-bot.onText(/\/gram2gram/, (msg) =>
-  bot.sendMessage(msg.chat.id, `Valid command(s): auth`)
-);
+function subscribe(chat) {
+  if (!_.find(subscriptions, s => s.id === chat.id)) {
+    subscriptions.push({
+      name: chat.title || chat.username,
+      id: chat.id
+    });
+    bot.sendMessage(chat.id, `${chat.username || chat.title} (${chat.id}) has been subscribed`);
+  } else {
+    bot.sendMessage(chat.id, `${chat.username || chat.title} is already subscribed`);
+  }
+}
+
+function unsubscribe(chat) {
+  if (_.find(subscriptions, s => s.id === chat.id)) {
+    _.remove(subscriptions, subscription => subscription.id === chat.id);
+    if (!_.find(subscriptions, s => s.id === chat.id)) {
+      bot.sendMessage(chat.id, `${chat.username || chat.title} (${chat.id}) has been unsubscribed`);
+    }
+  } else {
+    bot.sendMessage(chat.id, `${chat.username || chat.title} (${chat.id}) was not found. Cannot unsubscribe`);
+  }
+}
+
+function listSubscriptions(chat) {
+  const subs = _.join(
+    _.map(subscriptions, s => `${s.name} (${s.id})`),
+    '\n'
+  );
+  if(subs) {
+    bot.sendMessage(chat.id, subs);
+  } else {
+    bot.sendMessage(chat.id, `No subscriptions found`);
+  }
+}
+
+bot.onText(/\/gram2gram$/, (msg) => {
+  bot.sendMessage(msg.chat.id, `Usage: /gram2gram <command>`);
+  bot.sendMessage(msg.chat.id, `Valid command(s): auth, subscribe, unsubscribe, subscriptions`);
+});
 
 bot.on('message', (msg) => {
-  console.log('got a message');
-  db.putAsync('a', msg);
-});
-
-bot.router.post(`/bot${BOT_TOKEN}`, (req, res) => {
-  bot.processUpdate(req.body);
-  res.sendStatus(200);
+  console.log(`Message [from/in] ${msg.chat.usename || msg.chat.title} (${msg.chat.id})`);
 });
 
 module.exports = bot;

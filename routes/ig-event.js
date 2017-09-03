@@ -10,9 +10,6 @@ const db = require('../db');
 //const group_chat_id = '';
 //const CHAT_ID = '';
 
-// TODO db for tg users
-// telegram_user = id => { access_token, ig_username }
-
 const router = express.Router();
 
 router.use(bodyParser.json());
