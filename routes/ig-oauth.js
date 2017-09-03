@@ -49,6 +49,7 @@ router.get('/', (req, res) => {
 });
 
 router.use((err, req, res, next) => {
+  console.log("Enter: ig-oauth error middleware");
   if (req) {
     bot.sendMessageToSubscribers(
       `[ig-oauth]: I broke trying to handle ${req.method} ${req.path}.` +

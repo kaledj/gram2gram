@@ -46,6 +46,7 @@ router.post('/', async (req, res, next) => {
 });
 
 router.use((err, req, res, next) => {
+  console.log("Enter: ig-event error middleware");
   if (req) {
     bot.sendMessageToSubscribers(
       `[ig-event]: I broke trying to handle ${req.method} ${req.path}.` +
