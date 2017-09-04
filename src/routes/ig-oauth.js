@@ -11,15 +11,6 @@ const IG_REDIRECT_URI= `http://${HOST}:3000/ig-oauth`;
 
 const router = express.Router();
 
-// TODO
-// load static shit from config
-// const DEBUG_CHAT_ID
-//const group_chat_id = '';
-//const CHAT_ID = '';
-
-// TODO db for ig users
-// instagram_user = id => { access_token, ig_username }
-
 router.get('/', (req, res) => {
   const telegram_id = req.query.state.split(':')[0];
   const telegram_username = req.query.state.split(':')[1];

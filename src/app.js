@@ -9,4 +9,4 @@ server.use((err, req, res, next) => {
   bot.sendMessageToSubscribers(`Something did not go so well my dudes.`);
 });
 
-server.listen(PORT);
+server.listen(PORT, () => console.log(`Server started.  Listening on:${POST}`));
