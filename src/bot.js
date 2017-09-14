@@ -47,8 +47,8 @@ const authenticate_telegram_user = (user) => bot.sendMessage(user.id,
 // });
 
 bot.on('callback_query', async cbq => {
-  if (data.type != 'ig_like') return;
   const data = JSON.parse(cbq.data);
+  if (data.type != 'ig_like') return;
   const user = cbq.from;
   const access_token = await db.getAsync(user.id);
   if (!access_token) {

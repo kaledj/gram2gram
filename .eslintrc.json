@@ -1,11 +1,12 @@
 {
+  "root": true,
+  "extends": "eslint:recommended",
   "env": {
     "es6": true,
     "node": true
   },
   "parserOptions": {
-    "ecmaVersion": 2017,
-    "sourceType": "module"
+    "ecmaVersion": 2017
   },
   "rules": {
     "no-const-assign": "warn",
@@ -13,7 +14,7 @@
     "no-undef": "warn",
     "no-unreachable": "warn",
     "no-unused-vars": "warn",
-    "constructor-super": "warn",
-    "valid-typeof": "warn"
+    "no-use-before-define": ["error", { "functions": false }],
+    "no-console": "off"
   }
 }
