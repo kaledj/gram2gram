@@ -59,9 +59,10 @@ bot.on('callback_query', async cbq => {
     bot.answerCallbackQuery(cbq.id);
   } else {
     const payload = {
-      url: `https://api.instagram.com/v1/media/${data.mId}/likes`,
+      url: `https://api.instagram.com/v1/media/${data.mId}/likes?access_token=${access_token}`,
       form: { access_token }
     };
+    console.log(payload);
     request.post(payload, (err, response) => {
       if (err) bot.answerCallbackQuery(cbq.id);
       bot.answerCallbackQuery(cbq.id);
