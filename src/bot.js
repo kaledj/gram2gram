@@ -50,7 +50,8 @@ bot.on('callback_query', async cbq => {
   const data = JSON.parse(cbq.data);
   if (data.type != 'ig_like') return;
   const user = cbq.from;
-  const access_token = await db.getAsync(user.id);
+  const ig_user = await db.getAsync(user.id);
+  const access_token = ig_user.access_token;
   if (!access_token) {
     bot.sendMessage(cbq.message.chat.id,
       `I dont have an Instagram token for ${user.username}. I PMd them an OAuth link.`
@@ -59,7 +60,7 @@ bot.on('callback_query', async cbq => {
     bot.answerCallbackQuery(cbq.id);
   } else {
     const payload = {
-      url: `https://api.instagram.com/v1/media/${data.mId}/likes?access_token=${access_token}`,
+      url: `https://api.instagram.com/v1/media/${data.mId}/likes?access_token`,
       form: { access_token }
     };
     console.log(payload);
