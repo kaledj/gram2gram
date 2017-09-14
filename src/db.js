@@ -1,6 +1,6 @@
 const level = require('level');
 
-const db = level('./leveldb', {
+const db = level('/leveldb', {
   valueEncoding: 'json'
 });
 
