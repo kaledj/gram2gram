@@ -33,7 +33,7 @@ const subscriptions = [];
 bot.router = express.Router();
 
 const authenticate_telegram_user = (user) => bot.sendMessage(user.id,
-  `${OAUTH_URL}&state=${user.id}:${user.username}`
+  `${OAUTH_URL}&uid=${user.id}`
 );
 
 // TODO: these are webhook related things
@@ -56,15 +56,12 @@ bot.on('callback_query', async cbq => {
     access_token = ig_user.access_token;
   }
   if (!access_token) {
-    bot.sendMessage(cbq.message.chat.id,
-      `I dont have an Instagram token for ${user.username}. I PMd them an OAuth link.`
-    );
-    authenticate_telegram_user(user)
-    .catch(() => bot.sendMessage(
-      cbq.message.chat.id,
-      `I couldnt message ${user.username}. They probably need to message me first.`
-    ));
-    bot.answerCallbackQuery(cbq.id);
+    const options = {
+      callback_query_id: cbq.id,
+      text: `${OAUTH_URL}&uid=${cbq.from.id}`,
+      show_alert: true
+    };
+    bot.answerCallbackQuery(options);
   } else {
     const payload = {
       url: `https://api.instagram.com/v1/media/${data.mId}/likes?access_token`,
@@ -109,7 +106,14 @@ bot.onText(/\/gram2gram (.+)/, async (msg, match) => {
   if (command === 'subscriptions') {
     listSubscriptions(msg.chat);
   }
+  if (command === 'debug') {
+    debug(msg.chat);
+  }
 });
+
+function debug(chat) {
+  bot.sendMessage(chat.id, 'Secret debug message');
+}
 
 function subscribe(chat) {
   if (!_.find(subscriptions, s => s.id === chat.id)) {

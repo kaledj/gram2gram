@@ -12,8 +12,7 @@ const IG_REDIRECT_URI= `http://${HOST}:3000/ig-oauth`;
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  const telegram_id = req.query.state.split(':')[0];
-  const telegram_username = req.query.state.split(':')[1];
+  const telegram_id = req.query.uid;
   const payload = {
     url: 'https://api.instagram.com/oauth/access_token',
     form: {
