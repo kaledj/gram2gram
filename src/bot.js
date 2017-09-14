@@ -51,12 +51,19 @@ bot.on('callback_query', async cbq => {
   if (data.type != 'ig_like') return;
   const user = cbq.from;
   const ig_user = await db.getAsync(user.id);
-  const access_token = ig_user.access_token;
+  let access_token;
+  if (ig_user) {
+    access_token = ig_user.access_token;
+  }
   if (!access_token) {
     bot.sendMessage(cbq.message.chat.id,
       `I dont have an Instagram token for ${user.username}. I PMd them an OAuth link.`
     );
-    authenticate_telegram_user(user);
+    authenticate_telegram_user(user)
+    .catch(() => bot.sendMessage(
+      cbq.message.chat.id,
+      `I couldnt message ${user.username}. They probably need to message me first.`
+    ));
     bot.answerCallbackQuery(cbq.id);
   } else {
     const payload = {
