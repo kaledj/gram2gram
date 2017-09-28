@@ -1,5 +1,5 @@
-# gram2gram
-## Instagram 2 Telegram
+# gram2gram 
+#### Instagram 2 Telegram
 
 ### How to use
 /gram2gram \<command\>
